@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<meta charset = "utf-8">
+
+<style type="text/css">
+    body {
+     font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .line1 {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+
+    .line2 {
+        fill: none;
+        stroke: red;
+        stroke-width: 1.5px;
+    }
+
+</style>
+
+<body>
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script type="text/javascript">
+        var margin = { top: 20, right: 80, bottom: 30, left: 50 },
+            width = 960 - margin.left - margin.right,
+            height = 640 - margin.top - margin.bottom;
+
+        var color = d3.scale.category20();
+        var x = d3.scale.linear().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+        
+        var xAxis = d3.svg.axis().scale(x).orient("bottom");
+        var yAxis = d3.svg.axis().scale(y).orient("left");
+
+        var line = d3.svg.line().interpolate("linear").x(function(d){return x(d.tsync);})
+                        .y(function(d){return y(d.DD);});
+      
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var matches = [];
+        function classifyDataset(data){
+     
+             
+                var datasets = [];
+            data.forEach(function d(){
+               
+                d.match = d.match;
+                if (matches[matches.length-1] != d.match) {
+                    matches.push(d.match);
+                
+                }
+                return matches;
+            })
+        }
+
+        var team = ["radiant", "dire"];
+
+        d3.csv('data_files/data2.csv', function(error, data) {
+             var matches = classifyDataset(data);
+                   var data1 = [];
+            var data2 = [];
+          //  var lines = new Array(2 * matches.length);
+            data.forEach(function(d) {
+                  d.tsync = +d.tsync;
+                  d.DD = +d.DD;
+                  d.team = d.team;
+                  d.match = +d.match;
+                if (d.team == "radiant")
+                    data1.push(d);
+                else
+                    data2.push(d);
+         });
+
+          
+
+        x.domain(d3.extent(data, function(d){return d.tsync}));
+        y.domain(d3.extent(data,function(d){return d.DD}));
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+//             .attr("dy", ".71em")
+// for (var i = 0; i < 30; i++) {
+//     svg.append("path")
+//             // .datum(data[!0])
+//             .attr("class", "line" + i)
+// };
+        svg.append("path")
+            // .datum(data[!0])
+            .attr("class", "line1")
+            .attr("d", line(data1));
+
+            svg.append("path")
+            // .datum(data[!0])
+            .attr("class", "line2")
+            .attr("d", line(data2));
+      });    
+
+
+
+
+
+    </script>
+</body>
