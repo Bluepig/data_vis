@@ -1,7 +1,7 @@
 var ids = [ 580713548, 580607270,634790888, 636303474, 648267400, 645174955, 643571475, 643470370];
 var da = [];
 var nameCounter  = 0;
-var color = d3.scale.category10().domain(d3.range(1,10));
+var color = d3.scale.category10().domain(d3.range(0         ,10));
 var temp1 = [];
 var temp2 = [];
 var tell = function(a){
@@ -75,4 +75,9 @@ var pig = [];
         for (var i = 0; i < 16; i++) {
            document.getElementById("line" + i).removeAttribute("class", "lines");
         };
+    }
+
+
+    function (svg){
+        svg.
     }

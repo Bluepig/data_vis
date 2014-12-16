@@ -109,7 +109,6 @@
                     .attr("class","lines")
                     .attr("id", "line" + j)
                     .attr("stroke", color(j))
-                    .attr('stroke-dasharray',"5,5" )
                     .attr('fill',"none" )
                     .attr("d", line(pig[j]));
                 }
@@ -118,6 +117,7 @@
                 .attr("class","lines")
                     .attr("id", "line" + j)
                     .attr("stroke", color(j-1))
+                    .attr('stroke-dasharray',"5,5" )
                     .attr('fill',"none" )
                     .attr("d", line(pig[j]));
                 }
