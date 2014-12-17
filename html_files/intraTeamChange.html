@@ -89,9 +89,9 @@
             });
             da.push(temp1,temp2);
           
-            pig = calculate1(da);
+            pig = calculate2(da);
             x.domain(d3.extent(data, function(d){return d.tsync;}));
-            y.domain([0,150]);
+            y.domain([0,100]);
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")

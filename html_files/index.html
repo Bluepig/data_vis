@@ -4,193 +4,189 @@
     <script src="../d3.js"></script>
     <script src="../toolkit.js"></script>
     <style>
-
-body {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-.arc path {
-  stroke: #fff;
-}
-.dot {
-  stroke: none;
-}
-
-</style>
+      body {
+        font: 10px sans-serif;
+      }
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+      .arc path {
+        stroke: #fff;
+      }
+      .dot {
+        stroke: none;
+      }
+    </style>
 </head>
 <body>
     <script type="text/javascript">
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 200 - margin.top - margin.bottom;
-var radius = 150;
-var arc = d3.svg.arc()
-    .outerRadius(radius - 10)
-    .innerRadius(0);
-var x = d3.scale.linear()
-    .range([0, width]);
+        width = 600 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom;
+    var radius = 120;
+    var arc = d3.svg.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(0);
+    var x = d3.scale.linear()
+        .range([0, width]);
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+    
+    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    var yAxis = d3.svg.axis().scale(y).orient("left");
 
-var color = d3.scale.category10();
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var svg2 = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", 400)
-  .append("g")
-    .attr("transform", "translate(" + 300 + "," +  200+ ")");
-        var occurZones = [
-            {"name":"void dire" ,"counter" :0,"times":[]},
-            {"name":"void radiant" ,"counter" :0,"times" : []},
-            {"name":"midlane dire" ,"counter" :0,"times" : []},
-            {"name":"toplane dire" ,"counter" :0,"times" : []},
-            {"name":"laneshop dire" ,"counter" :0,"times" : []},
-            {"name":"bottomlane dire" ,"counter" :0,"times" : []},
-            {"name":"toplane radiant" ,"counter" :0,"times" : []},
-            {"name":"midlane radiant" ,"counter" :0,"times" : []},
-            {"name":"bottomlane radiant" ,"counter" :0,"times" : []},
-            {"name":"laneshop radiant" ,"counter" :0,"times" : []},
-            {"name":"base1 radiant" ,"counter" :0,"times" : []},
-            {"name":"base2 dire" ,"counter" :0,"times" : []},
-            {"name":"jungle dire" ,"counter" :0,"times" : []},
-            {"name":"jungle radiant" ,"counter":0,"times" : []},
-            {"name":"pit dire" ,"counter" :0,"times" : []},
-            {"name":"river" ,"counter" :0,"times" : []},
-            {"name":"secretshop dire" ,"counter" :0,"times" : []},
-            {"name":"secretshop radiant" ,"counter" :0,"times" : []}
-            ];
-        var actualZones= [];
-        var shabi = [];
-        d3.csv('../data_files/643470370.csv', function(error, data) {
-            var occurZone;
-            var zones = [];
-            var playerZonePerTsync = [];
-            var result;
-            var actualTimes = [];
-            for (var i = 0; i < data.length/10; i++) {
-                playerZonePerTsync = [];
-                data.forEach(function(d,j){
-                    if (d.tsync == i) {
-                        playerZonePerTsync.push(d.zone);
-                    };
-                });
+        .attr("width", width)
+        .attr("height", 300)
+        .append("g")
+        .attr("transform", "translate(" + 150 + "," +  150+ ")");
+    var occurZones = [
+        {"name":"void dire" ,"counter" :0,"times":[]},
+        {"name":"void radiant" ,"counter" :0,"times" : []},
+        {"name":"midlane dire" ,"counter" :0,"times" : []},
+        {"name":"toplane dire" ,"counter" :0,"times" : []},
+        {"name":"laneshop dire" ,"counter" :0,"times" : []},
+        {"name":"bottomlane dire" ,"counter" :0,"times" : []},
+        {"name":"toplane radiant" ,"counter" :0,"times" : []},
+        {"name":"midlane radiant" ,"counter" :0,"times" : []},
+        {"name":"bottomlane radiant" ,"counter" :0,"times" : []},
+        {"name":"laneshop radiant" ,"counter" :0,"times" : []},
+        {"name":"base1 radiant" ,"counter" :0,"times" : []},
+        {"name":"base2 dire" ,"counter" :0,"times" : []},
+        {"name":"jungle dire" ,"counter" :0,"times" : []},
+        {"name":"jungle radiant" ,"counter":0,"times" : []},
+        {"name":"pit dire" ,"counter" :0,"times" : []},
+        {"name":"river" ,"counter" :0,"times" : []},
+        {"name":"secretshop dire" ,"counter" :0,"times" : []},
+        {"name":"secretshop radiant" ,"counter" :0,"times" : []}
+        ];
+    var colors = [];
+    occurZones.forEach(function(d){
+        colors.push(d.name);
+    });
+    var color = d3.scale.category20().domain(colors);
+    var actualZones= [];
+    var shabi = [];
 
-                result = calculateOccurence(playerZonePerTsync);  
-                occurZone = result[0][returnZoneIndex(result[1])]; 
 
-                if(occurZone != undefined){                
-                    zones.push(occurZone);  
-                    occurZones.forEach(function(d){
-                        if (d.name == occurZone) {
-                            d.times.push(i);
-                            shabi.push({"name":d.name,"time":i});
-                        };
-                    });   
-                }   
-            };
-
-            zones.forEach(function(d){
-                occurZones.forEach(function(d2){
-                    if (d==d2.name) {
-                        d2.counter++
-                    };
-                });
-            });
-
-            occurZones.forEach(function(d){
-                if (d.counter !=0) {
-                    actualZones.push(d);
+    d3.csv('../data_files/645174955.csv', function(error, data) {
+        var occurZone;
+        var zones = [];
+        var playerZonePerTsync = [];
+        var result;
+        var actualTimes = [];
+        for (var i = 0; i < data.length/10; i++) {
+            playerZonePerTsync = [];
+            data.forEach(function(d,j){
+                if (d.tsync == i) {
+                    playerZonePerTsync.push(d.zone);
                 };
             });
+        result = calculateOccurence(playerZonePerTsync);  
+        occurZone = result[0][returnZoneIndex(result[1])]; 
 
-             x.domain(d3.extent(shabi,function(d){return d.time})).nice();
-           //  y.domain(d3.extent([0,40])).nice();
-             svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("time (tsync)");
+            if(occurZone != undefined){                
+                zones.push(occurZone);  
+                occurZones.forEach(function(d){
+                    if (d.name == occurZone) {
+                        d.times.push(i);
+                        shabi.push({"name":d.name,"time":i});
+                    };
+                });   
+            }   
+        };
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("fight zone")
+        zones.forEach(function(d){
+            occurZones.forEach(function(d2){
+                if (d==d2.name) {
+                    d2.counter++
+                };
+            });
+        });
+
+        occurZones.forEach(function(d){
+            if (d.counter !=0) {
+                actualZones.push(d);
+            };
+        });
+        var colorZones = [];
+        actualZones.forEach(function(d){
+          colorZones.push(d.name);
+        });
+
+        x.domain(d3.extent([0,2600])).nice();
+        
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text("time (tsync)");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("fight zone")
 
         svg.selectAll(".dot")
-      .data(shabi)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 8)
-      .attr("cx", function(d) { return x(d.time)})
-      .attr("cy", 100 )
-      .style("fill", function(d) { return color(d.name); });
+            .data(shabi)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 8)
+            .attr("cx", function(d) { return x(d.time)})
+            .attr("cy", 200 )
+            .style("fill", function(d) { return color(d.name); });
 
-      var legend = svg.selectAll(".legend")
-      .data(color.domain())
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        var legend = svg.selectAll(".legend")
+            .data(colorZones)
+            .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
+        legend.append("rect")
+            .attr("x", width - 18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color);
 
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
-var pie = d3.layout.pie()
-    .sort(null)
-    .value(function(d) { return d.counter; });
-var g2 = svg2.selectAll(".arc")
-      .data(pie(actualZones))
-    .enter().append("g")
-      .attr("class", "arc");
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d) { return d; });
 
-  g2.append("path")
-      .attr("d", arc)
-      .style("fill", function(d) { return color(d.data.name); });
-  g2.append("text")
-      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-      .attr("dy", ".35em")
-      .style("text-anchor", "middle")
-      .text(function(d) { return d.data.name; });
-        });       
-    </script>
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.counter; });
+        var g2 = svg2.selectAll(".arc")
+            .data(pie(actualZones))
+            .enter().append("g")
+            .attr("class", "arc");
+
+        g2.append("path")
+            .attr("d", arc)
+            .style("fill", function(d) { return color(d.data.name); });
+    });       
+  </script>
 </body>
