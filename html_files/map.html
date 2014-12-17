@@ -1,99 +1,43 @@
 <!DOCTYPE html>
+<html>
 <meta charset="utf-8">
-<style>
-
-body {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-</style>
+<head>
+<link rel="stylesheet" type="text/css" href="../css_files/style.css">
+</head>
 <body>
-<div class="row">
-    <div class="col-md-4" id ="svgArea"></div>
- </div>
+    <div class="row">
+        <div class="col-md-4" id ="svgArea"></div>
+    </div>
 <script src="http://d3js.org/d3.v3.js"></script>
-
 <script>
+    var margin = {top: 50, right: 50, bottom: 50, left: 50},
+        width = 1100 - margin.left - margin.right,
+        height = 1100 - margin.top - margin.bottom;
 
+    var svg = d3.select("#svgArea").append("svg")
+        .attr("width", width +100 + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var margin = {top: 50, right: 50, bottom: 50, left: 50},
-    width = 1100 - margin.left - margin.right,
-    height = 1100 - margin.top - margin.bottom;
+    var x = d3.scale.linear()
+        .range([0, width]);
 
- var svg = d3.select("#svgArea").append("svg")
-            .attr("width", width +100 + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
-
-
-
-
-var x = d3.scale.linear()
-    .range([0, width]);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var occurZones = [
-        {"name":"base1 radiant" ,"value" :1},
-        {"name":"base2 dire" ,"value" :2},
-        {"name":"bottomlane dire" ,"value" :3},
-        {"name":"bottomlane radiant" ,"value" :4,},
-        {"name":"jungle dire" ,"value" :5},
-        {"name":"jungle radiant" ,"value":6},
-        {"name":"laneshop dire" ,"value" :7},
-        {"name":"laneshop radiant" ,"value" :8},
-        {"name":"midlane dire" ,"value" :9},
-        {"name":"midlane radiant" ,"value" :10},
-        {"name":"pit dire" ,"value" :11},
-        {"name":"river" ,"value" :12},
-        {"name":"secretshop dire" ,"value" :13},
-        {"name":"secretshop radiant" ,"value" :14},
-        {"name":"toplane dire" ,"value" :15},      
-        {"name":"toplane radiant" ,"value" :16},
-        {"name":"void dire" ,"value" :17},
-        {"name":"void radiant" ,"value" :18},
-      ];
-    var colors = [];
-    occurZones.forEach(function(d){
-        colors.push(d.name);
-    });
-    var color = d3.scale.category20().domain(colors);
- // var color = d3.scale.ordinal()
- //    .range(["#17becf ", "#2ca02c", "#d62728", "#9467bd", "#ff7f0e","#e377c2",
- //      "#bcbd22","#17becf", 
- //      ]);
-
+    var zones = ["base1 radiant","base2 dire","bottomlane dire","bottomlane radiant","jungle dire","jungle radiant","laneshop dire","laneshop radiant","midlane dire","midlane radiant","pit dire","river","secretshop dire","secretshop radiant","toplane dire","toplane radiant","void dire","void radiant"];
+    var color = d3.scale.category20().domain(zones);
 
     var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
-
     var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
             .ticks(10);
 
-
-
-
-var imgs =svg.selectAll("image").data([0]);
+    var imgs =svg.selectAll("image").data([0]);
 	imgs.enter()
 		.append("svg:image")
 		.attr("xlink:href","map.png")
@@ -104,19 +48,18 @@ var imgs =svg.selectAll("image").data([0]);
 		.attr("height",height);
 
 
- d3.csv("../data_files/Labels.csv",function(error,data){
+    d3.csv("../data_files/Labels.csv",function(error,data){
     
-  data.forEach(function(d){
-            //Sometimes the numbers are returned as strings, these lines transform those strings are transformed into numbers
+        data.forEach(function(d){
             d.value=d.value;
             d.x = +d.x;
             d.y = +d.y;
         });
  
-      x.domain(d3.extent(data, function(d){return d.x;}));
-      y.domain(d3.extent(data, function(d){return d.y;}));
+        x.domain(d3.extent(data, function(d){return d.x;}));
+        y.domain(d3.extent(data, function(d){return d.y;}));
 
-   svg.append("g")
+        svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
@@ -156,5 +99,7 @@ var imgs =svg.selectAll("image").data([0]);
             .attr("dy", ".35em")
             .style("text-anchor", "end")
             .text(function(d) { return d; });
- });
+        });
 </script>
+</body>
+</html>
