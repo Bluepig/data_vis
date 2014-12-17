@@ -4,12 +4,33 @@ var nameCounter  = 0;
 var color = d3.scale.category10().domain(d3.range(0         ,10));
 var temp1 = [];
 var temp2 = [];
-var tell = function(a){
+var sortResult = function(a){
     if (a.result == "Win") {
         temp1.push(a)
     }
     else if (a.result == "Lose"){
         temp2.push(a)
+    }
+}
+function calculateOccurence(arr) {
+    var a = [], b = [], prev;
+    arr.sort();
+    for ( var i = 0; i < arr.length; i++ ) {
+        if ( arr[i] !== prev ) {
+            a.push(arr[i]);
+            b.push(1);
+        } else {
+            b[b.length-1]++;
+        }
+        prev = arr[i];
+    }
+    return [a, b];
+}
+function returnZoneIndex(array){
+    for(var j=0; j < array.length;j++){
+        if (array[j] >= 7){
+            return j;
+        }
     }
 }
 function calculate(array){
@@ -77,7 +98,3 @@ var pig = [];
         };
     }
 
-
-    function (svg){
-        svg.
-    }

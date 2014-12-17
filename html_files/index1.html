@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<meta charset = "utf-8">
+<head>
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<style type="text/css">
+    body {
+     font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    #buttonContainer{
+        width:300px;
+        height:500px;
+        position: absolute;
+        left:899px;
+        top:99px;
+    }
+
+    .lines{
+        display: none;
+    }
+    .buttonArea{
+        margin-bottom :20px;
+    }
+</style>
+</head>
+<body>
+    <div id = "buttonContainer">
+    <div class="buttonArea">
+         <button type="button" class="btn btn-info" onclick="showPro()">Pro</button>
+         <button type="button" class="btn btn-info" onclick="showVeryHigh()">VeryHigh</button>
+         <button type="button" class="btn btn-info" onclick="showHigh()">High</button>
+         <button type="button" class="btn btn-info" onclick="showNormal()">Normal</button>
+
+    </div>
+    <div class="buttonArea">
+        <button type="button" class="btn btn-success" onclick="showWin()">Win</button>
+        <button type="button" class="btn btn-success" onclick="showLose()">Lose</button>
+    </div>
+    <div class="buttonArea">
+        <button type="button" class="btn btn-primary" onclick="showAll()">ShowAll</button>
+    </div>
+    </div>
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="toolkit.js"></script>
+    <script type="text/javascript">
+        
+        var margin = { top: 20, right: 80, bottom: 30, left: 50 },
+            width = 960 - margin.left - margin.right,
+            height = 640 - margin.top - margin.bottom;
+
+        var x = d3.scale.linear().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+
+        var xAxis = d3.svg.axis().scale(x).orient("bottom");
+        var yAxis = d3.svg.axis().scale(y).orient("left");
+        var line = d3.svg.line().interpolate("linear").x(function(d){return x(d.ni);})
+                        .y(function(d){return y(d.wo);});
+      
+        var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        d3.csv('data_files/data1.csv', function(error, data) {
+            data.forEach(function(d) {
+                
+                d.tsync = +d.tsync;
+                d.DD = +d.DD;
+                d.match = +d.match;
+                d.result = d.result;
+                if (d.match == ids[nameCounter]){
+                    sortResult(d);
+                }
+                else {
+                   da.push(temp1,temp2);
+                    nameCounter++;
+                    temp1 = [];
+                    temp2 = [];
+                    sortResult(d);
+                }   
+            });
+            da.push(temp1,temp2);
+          
+            pig = calculate(da);
+            x.domain(d3.extent(data, function(d){return d.tsync;}));
+            y.domain([0,150]);
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .attr("dy", ".71em")
+            
+            for (var j = 0;j < 2 * ids.length;j= j+2){
+                svg.append("path")
+                    .attr("class","lines")
+                    .attr("id", "line" + j)
+                    .attr("stroke", color(j))
+                    .attr('fill',"none" )
+                    .attr("d", line(pig[j]));
+                }
+            for (var j = 1;j < 2 * ids.length ;j= j+2){
+                svg.append("path")
+                .attr("class","lines")
+                    .attr("id", "line" + j)
+                    .attr("stroke", color(j-1))
+                    .attr('stroke-dasharray',"5,5" )
+                    .attr('fill',"none" )
+                    .attr("d", line(pig[j]));
+                }
+            });    
+    </script>
+</body>
