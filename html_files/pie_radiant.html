@@ -3,7 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <title>Pie Multiples with Nesting</title>
-    <script type="text/javascript" src="../d3.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.4.5"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.csv.js?2.4.5"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js?2.4.5"></script>
     <style type="text/css">
 
 body {
@@ -20,12 +22,13 @@ svg {
     <script type="text/javascript">
 
 // Load the flight data asynchronously.
-d3.csv("../data_files/radiant.csv", function(flights) {
+d3.csv("../data_files/radiant_lose.csv", function(flights) {
+  
 
   // Define the margin, radius, and color scale. Colors are assigned lazily, so
   // if you want deterministic behavior, define a domain for the color scale.
   var m = 10,
-      r = 200,
+      r = 250,
       z = d3.scale.category20c();
 
   // Define a pie layout: the pie angle encodes the count of flights. Since our
@@ -42,7 +45,7 @@ d3.csv("../data_files/radiant.csv", function(flights) {
   // Nest the flight data by originating airport. Our data has the counts per
   // airport and carrier, but we want to group counts by aiport.
   var airports = d3.nest()
-      .key(function(d) { return d.match; })
+      .key(function(d) { return d.tier; })
       .key(function(d) { return d.zone; })
       .rollup(function(leaves) { return leaves.length; })
       .entries(flights);
@@ -53,7 +56,7 @@ d3.csv("../data_files/radiant.csv", function(flights) {
       .data(airports)
     .enter().append("div") // http://code.google.com/p/chromium/issues/detail?id=98951
       .style("display", "inline-block")
-      .style("width", (r + m) * 2.5 + "px")
+      .style("width", (r + m) * 2 + "px")
       .style("height", (r + m) * 2 + "px")
     .append("svg:svg")
       .attr("width", (r + m) * 2)
